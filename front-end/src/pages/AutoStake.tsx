@@ -1,19 +1,28 @@
 import ImageStyles from "../styles/ImageRow.module.css";
 import StakeForm from "./StakeForm";
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Router, useRouter } from "next/router";
+import { Black_And_White_Picture } from "next/font/google";
+import Web3 from 'web3'
+
+const EtherScanAPIKey = "MC2UGUBDI73K3252KT4EYG5NZNDA6244Y8";
+const EtherScanAPI_URL = "https://api.etherscan.io/api";
 
 
 export default function AutoStakePage() {
     const [showForm, setShowForm] = useState(false);
     const [selectedImage, setSelectedImage] = useState('');
+    const [balance, setBalance] = useState(0);
+    const [address, setAddress] = useState('');
     const router = useRouter();
 
+    // Handle image click
     const handleImageClick = (imageUrl: React.SetStateAction<string>) => {
         setSelectedImage(imageUrl);
         setShowForm(true);
     };
 
+    // Back button to refresh the page when image selected, otherwise go back to main page
     const backButton = () => {
         if(!showForm) {
             router.push("/");
@@ -22,6 +31,31 @@ export default function AutoStakePage() {
             setShowForm(false);
         }
     };
+
+    // Initialize the public address and the balance
+    useEffect(() => {
+        // Get the balance of the account from EtherScan
+        const updateBalance = async () => {
+            const response = await fetch(`${EtherScanAPI_URL}?module=account&action=balance&address=${address}&tag=latest&apikey=${EtherScanAPIKey}`);
+            const data = await response.json();
+            console.log(data);
+            if(data.status == 1) {
+                const ether_balance = Web3.utils.fromWei(data.result, 'ether');
+                setBalance(Number(ether_balance));
+            } else {
+                console.error("Error fetching data from etherscan")
+            }
+        };
+        // Get the address from local storage
+        const storedAddress = localStorage.getItem("account") || '';
+        if (storedAddress !== ''){
+            setAddress(storedAddress);
+            updateBalance();
+        } else {
+            // If the address is not set, redirect to the main page
+            router.push("/");
+        }
+    }, [address, router]);
 
     const Form = () => {
         // Here we can define the form component
@@ -82,6 +116,15 @@ export default function AutoStakePage() {
 
             <div className="relative text-3xl flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700/10 after:dark:from-sky-900 after:dark:via-[#0141ff]/40 before:lg:h-[360px]">
                 Stake your assets
+            </div>
+
+            <div className="relative text-2xl flex place-items-center before:absolute before:h-[270px] before:w-[430px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[160px] after:w-[220px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700/10 after:dark:from-sky-900 after:dark:via-[#0141ff]/40 before:lg:h-[320px]">
+                Your public address is: {address}
+            </div>
+
+
+            <div className="relative text-3xl flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700/10 after:dark:from-sky-900 after:dark:via-[#0141ff]/40 before:lg:h-[360px]">
+                Your balance is: {balance} ether(s)
             </div>
 
             <ImageRow />

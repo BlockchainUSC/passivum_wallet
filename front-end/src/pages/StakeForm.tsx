@@ -6,7 +6,7 @@ export default function StakeForm() {
       <form className={styles.form}>
         <h2 className={styles.title}>Choose Amount</h2>
         <div className={styles.field}>
-          <input type="text" id="amount" className={styles.input} />
+          <input type="number" id="amount" className={styles.input} />
         </div>
         <button type="submit" className={styles.button}>
           Stake

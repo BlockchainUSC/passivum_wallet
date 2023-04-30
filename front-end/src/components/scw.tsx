@@ -27,7 +27,6 @@ const Home = ({onChildUpdate}: HomeProps) => {
         socialLoginSDK.provider
       );
       setProvider(web3Provider);
-      localStorage.setItem("provider", JSON.stringify(web3Provider));
       const accounts = await web3Provider.listAccounts();
       setAccount(accounts[0]);
       localStorage.setItem("account", accounts[0]);
@@ -81,7 +80,6 @@ const Home = ({onChildUpdate}: HomeProps) => {
     await socialLoginSDK.logout();
     socialLoginSDK.hideWallet();
     setProvider(undefined);
-    localStorage.removeItem("provider");
     setAccount(undefined);
     localStorage.removeItem("account");
     setScwAddress("");
