@@ -1,17 +1,37 @@
 import ImageStyles from "../styles/ImageRow.module.css";
 import StakeForm from "./StakeForm";
 import React, { useState } from 'react';
+import { Router, useRouter } from "next/router";
 
 
 export default function AutoStakePage() {
     const [showForm, setShowForm] = useState(false);
     const [selectedImage, setSelectedImage] = useState('');
+    const router = useRouter();
 
     const handleImageClick = (imageUrl: React.SetStateAction<string>) => {
         setSelectedImage(imageUrl);
         setShowForm(true);
     };
 
+    const backButton = () => {
+        if(!showForm) {
+            router.push("/");
+        } else {
+            setSelectedImage('');
+            setShowForm(false);
+        }
+    };
+
+    const Form = () => {
+        // Here we can define the form component
+        return (
+            <div className={ImageStyles.formContainer}>
+                <h2 className={ImageStyles.formTitle}>Stake your assets</h2>
+                <StakeForm />
+            </div>
+        );
+    };
     // builds the row of images
     const ImageRow = () => {
         const images = [
@@ -31,14 +51,10 @@ export default function AutoStakePage() {
                             />
                         </div>
                     ))}
-                </div>) :
-                    (
-
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                            <img src={selectedImage} style={{ width: '250px', height: '150px', marginBottom: '1rem' }} />
-                            <StakeForm />
-                        </div>
-                    )
+                </div>) : 
+                (
+                    <Form />
+                )
                 }
             </div>
         );
@@ -72,7 +88,7 @@ export default function AutoStakePage() {
 
             <div className="flex my-24 text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
                 <a
-                    href="/"
+                    onClick={backButton}
                     className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
                     rel="noopener noreferrer"
                 >
