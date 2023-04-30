@@ -112,7 +112,7 @@ const Home = ({onChildUpdate}: HomeProps) => {
     <div className={styles.container}>
       {/* <main className={styles.main}> */}
       <main>
-        <h1>Web3 Auth</h1>
+        {/* <h1>Web3 Auth</h1> */}
         <button onClick={!account ? connectWeb3 : disconnectWeb3}
         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center justify-center">
           {!account ? "Connect Wallet" : "Disconnect Wallet"}
