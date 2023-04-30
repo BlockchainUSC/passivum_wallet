@@ -6,6 +6,7 @@ import Lottie from 'react-lottie';
 export default function AddFriendsPage() {
     const friendRef = useRef<HTMLInputElement>(null);
     const [friendsList, setFriendsList] = useState<string[]>([]);
+    const [deadman, setDeadman] = useState('');
     const [nextPage, setNextPage] = useState(0);
 
     const defaultOptions = {
@@ -69,7 +70,8 @@ export default function AddFriendsPage() {
 
                     <div className="space-y-1">
                         {friendsList.map(friend => (
-                        <button className="flex bg-gray-100 hover:bg-red-100 focus:bg-red-100 w-[30rem] p-4 justify-between text-md" key={friend}>
+                        <button className="flex bg-gray-100 hover:bg-red-100 focus:bg-red-100 w-[30rem] p-4 justify-between text-md" key={friend} 
+                            onClick={() => setDeadman(friend)}>
                             <div>{friend}</div>
                             <Image
                                 src={'/garbage-icon.svg'}
@@ -79,6 +81,7 @@ export default function AddFriendsPage() {
                             />
                         </button>))}
                     </div>
+                    {nextPage === 1 ? <div>{`Selected deadman: ${deadman}`}</div> : null}
                     <button
                         className={`bg-blue-100 ml-4 px-8 py-2 rounded-xl text-xl`}
                         onClick={() => setNextPage(nextPage + 1)}
