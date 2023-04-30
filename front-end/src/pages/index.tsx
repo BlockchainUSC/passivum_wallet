@@ -1,9 +1,41 @@
 import Image from 'next/image'
 import { Inter } from 'next/font/google'
+import { useEffect, useState } from 'react';
+import dynamic from "next/dynamic";
+import { Suspense } from "react";
+
 
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
+  const [hasAccount, setHasAccount] = useState(false);
+
+  const SocialLoginDynamic = dynamic(
+    () => import("../components/scw").then((res) => res.default),
+    {
+      ssr: false,
+    }
+  );
+
+  // Check if user has account
+  useEffect(() => {
+    if(localStorage.getItem("account") !== null) {
+      setHasAccount(true);
+      console.log(localStorage.getItem("account"));
+    } else {
+      setHasAccount(false);
+    }},[]);
+
+    // Updates parent's hasAccount state when child updates
+    const onChildUpdate = () => {
+      if(localStorage.getItem("account") !== null) {
+        setHasAccount(true);
+        console.log(localStorage.getItem("account"));
+      } else {
+        setHasAccount(false);
+      }
+    }
+
   return (
     <main
       className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}
@@ -28,11 +60,20 @@ export default function Home() {
         PASSIVUM WALLET
       </div>
 
+      <div>
+          {/* style={{ display: hasAccount ? 'none' : 'block' }}> */}
+        <Suspense fallback={<div>Loading...</div>}>
+          <SocialLoginDynamic onChildUpdate={onChildUpdate}/>
+        </Suspense>
+
+      </div>
+
       <div className="flex mb-60 text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
         <a
           href="/AddFriends"
           className="w-1/2 group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
           rel="noopener noreferrer"
+          style={{ display: hasAccount ? 'block' : 'none' }}
         >
           <h2 className={`mb-3 text-2xl font-semibold`}>
             Add Friends{' '}
@@ -49,6 +90,7 @@ export default function Home() {
           href="/AutoStake"
           className="w-1/2 group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
           rel="noopener noreferrer"
+          style={{ display: hasAccount ? 'block' : 'none' }}
         >
           <h2 className={`mb-3 text-2xl font-semibold`}>
             Stake Assets{' '}

@@ -5,7 +5,11 @@ import { ChainId } from "@biconomy/core-types";
 import SocialLogin from "@biconomy/web3-auth";
 import SmartAccount from "@biconomy/smart-account";
 
-const Home = () => {
+type HomeProps = {
+  onChildUpdate: () => void;
+};
+
+const Home = ({onChildUpdate}: HomeProps) => {
   const [provider, setProvider] = useState<any>();
   const [account, setAccount] = useState<string>();
   const [smartAccount, setSmartAccount] = useState<SmartAccount | null>(null);
@@ -27,10 +31,12 @@ const Home = () => {
       const accounts = await web3Provider.listAccounts();
       setAccount(accounts[0]);
       localStorage.setItem("account", accounts[0]);
+      onChildUpdate();
       return;
     }
     if (socialLoginSDK) {
       socialLoginSDK.showWallet();
+      onChildUpdate();
       return socialLoginSDK;
     }
     const sdk = new SocialLogin();
@@ -39,8 +45,9 @@ const Home = () => {
     });
     setSocialLoginSDK(sdk);
     sdk.showWallet();
+    onChildUpdate();
     return socialLoginSDK;
-  }, [socialLoginSDK]);
+  }, [socialLoginSDK, onChildUpdate]);
 
   // if wallet already connected close widget
   useEffect(() => {
@@ -68,6 +75,7 @@ const Home = () => {
   const disconnectWeb3 = async () => {
     if (!socialLoginSDK || !socialLoginSDK.web3auth) {
       console.error("Web3Modal not initialized.");
+      onChildUpdate();
       return;
     }
     await socialLoginSDK.logout();
@@ -77,6 +85,7 @@ const Home = () => {
     setAccount(undefined);
     localStorage.removeItem("account");
     setScwAddress("");
+    onChildUpdate();
   };
 
   useEffect(() => {
@@ -101,9 +110,11 @@ const Home = () => {
 
   return (
     <div className={styles.container}>
-      <main className={styles.main}>
+      {/* <main className={styles.main}> */}
+      <main>
         <h1>Biconomy SDK Next.js Web3Auth Example</h1>
-        <button onClick={!account ? connectWeb3 : disconnectWeb3}>
+        <button onClick={!account ? connectWeb3 : disconnectWeb3}
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center justify-center">
           {!account ? "Connect Wallet" : "Disconnect Wallet"}
         </button>
 
