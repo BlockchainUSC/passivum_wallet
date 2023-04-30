@@ -1,0 +1,25 @@
+.imageRow {
+    display: flex;
+    border-radius: 10px;
+    overflow: hidden;
+    width: 100%;
+    max-width: 1200px;
+    /* set a maximum width */
+    margin: 0 auto;
+    /* center the images vertically */
+    align-items: center;
+    /* center the images horizontally */
+    justify-content: center;
+}
+
+.imageRow img {
+    width: 300px;
+    /* set a fixed width */
+    height: 150px;
+    /* set a fixed height */
+    object-fit: cover;
+    /* scale the image to fill the box */
+    border-radius: 10px;
+    margin-right: 10px;
+    /* add margin between the images */
+}
