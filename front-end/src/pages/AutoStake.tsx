@@ -12,15 +12,6 @@ export default function AutoStakePage() {
         setShowForm(true);
     };
 
-    const Form = () => {
-        // Here we can define the form component
-        return (
-            <div className={ImageStyles.formContainer}>
-                <h2 className={ImageStyles.formTitle}>Stake your assets</h2>
-                <StakeForm />
-            </div>
-        );
-    };
     // builds the row of images
     const ImageRow = () => {
         const images = [
@@ -40,10 +31,14 @@ export default function AutoStakePage() {
                             />
                         </div>
                     ))}
-                </div>) : 
-                (
-                    <Form />
-                )
+                </div>) :
+                    (
+
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                            <img src={selectedImage} style={{ width: '250px', height: '150px', marginBottom: '1rem' }} />
+                            <StakeForm />
+                        </div>
+                    )
                 }
             </div>
         );

@@ -4,21 +4,12 @@ export default function StakeForm() {
   return (
     <div className={styles.container}>
       <form className={styles.form}>
-        <h2 className={styles.title}>Form Title</h2>
+        <h2 className={styles.title}>Choose Amount</h2>
         <div className={styles.field}>
-          <label htmlFor="name" className={styles.label}>
-            Name:
-          </label>
-          <input type="text" id="name" className={styles.input} />
-        </div>
-        <div className={styles.field}>
-          <label htmlFor="email" className={styles.label}>
-            Email:
-          </label>
-          <input type="email" id="email" className={styles.input} />
+          <input type="text" id="amount" className={styles.input} />
         </div>
         <button type="submit" className={styles.button}>
-          Submit
+          Stake
         </button>
       </form>
     </div>
