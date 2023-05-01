@@ -7,6 +7,23 @@ import Web3 from 'web3'
 
 const EtherScanAPIKey = "MC2UGUBDI73K3252KT4EYG5NZNDA6244Y8";
 const EtherScanAPI_URL = "https://api.etherscan.io/api";
+// Addresses of ABI's for different tokens
+const USDT_ABI_ADDRESS = "0xdac17f958d2ee523a2206206994597c13d831ec7";
+const USDC_ABI_ADDRESS = "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48";
+const WBTC_ABI_ADDRESS = "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599";
+const LINK_ABI_ADDRESS = "0x514910771af9ca656af840dff83e8264ecf986ca";
+
+// Get the balance of the account from EtherScan of different tokens
+const fetchTokenBalance = async (contractAddress: string, account: string) => {
+    const response = await fetch(`${EtherScanAPI_URL}?module=account&action=tokenbalance&contractaddress=${contractAddress}&address=${account}&tag=latest&apikey=${EtherScanAPIKey}`);
+    const data = await response.json();
+    if (data.status === '1') {
+      return Number(parseFloat(data.result) / (10 ** 18));
+    } else {
+      console.error('Error fetching token balance from Etherscan');
+      return 0;
+    }
+  };
 
 
 export default function AutoStakePage() {
@@ -17,11 +34,25 @@ export default function AutoStakePage() {
     const [amtIsInvalid, setAmtIsInvalid] = useState(false);
     const [stakingAmt, setStakingAmt] = useState(0);
     const router = useRouter();
+    // balances of different tokens
+    const [usdtBalance, setUSDTBalance] = useState<number>(0);
+    const [usdcBalance, setUSDCBalance] = useState<number>(0);
+    const [wbtcBalance, setWBTCBalance] = useState<number>(0);
+    const [linkBalance, setLINKBalance] = useState<number>(0);
+
+    const allBalances = [
+        {name: "ETH", balance: balance},
+        {name: "USDT", balance: usdtBalance},
+        {name: "USDC", balance: usdcBalance},
+        {name: "WBTC", balance: wbtcBalance},
+        {name: "LINK", balance: linkBalance}
+    ];
 
     // Handle image click
     const handleImageClick = (imageUrl: React.SetStateAction<string>) => {
         setSelectedImage(imageUrl);
         setShowForm(true);
+        console.log("HANDLING IMAGE CLICK");
     };
 
     // Back button to refresh the page when image selected, otherwise go back to main page
@@ -60,11 +91,20 @@ export default function AutoStakePage() {
                 console.error("Error fetching data from etherscan")
             }
         };
+
+        // Update the balances of all the other tokens
+        const updateTokenBalances = async () => {
+            setUSDCBalance(await fetchTokenBalance(USDC_ABI_ADDRESS, address));
+            setUSDTBalance(await fetchTokenBalance(USDT_ABI_ADDRESS, address));
+            setWBTCBalance(await fetchTokenBalance(WBTC_ABI_ADDRESS, address));
+            setLINKBalance(await fetchTokenBalance(LINK_ABI_ADDRESS, address));
+        };
         // Get the address from local storage
         const storedAddress = localStorage.getItem("account") || '';
         if (storedAddress !== ''){
             setAddress(storedAddress);
             updateBalance();
+            updateTokenBalances();
         } else {
             // If the address is not set, redirect to the main page
             router.push("/");
@@ -138,7 +178,17 @@ export default function AutoStakePage() {
 
 
             <div className="relative text-3xl flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700/10 after:dark:from-sky-900 after:dark:via-[#0141ff]/40 before:lg:h-[360px]">
-                Your balance is: {balance} ether(s)
+                Your balances are:
+            </div>
+            
+            <div className="flex flex-wrap justify-center items-center gap-4">
+                {allBalances.map(({name, balance}) => {
+                    return(
+                    <p key={name} className="text-xl text-white bg-blue-500 rounded-lg shadow-lg p-4 mb-4 before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700/10 after:dark:from-sky-900 after:dark:via-[#0141ff]/40 before:lg:h-[360px] w-full sm:w-auto sm:mx-2 sm:flex-grow sm:flex-shrink-0">
+                        {name}: {balance}
+                    </p>
+                    );
+                })}
             </div>
 
             

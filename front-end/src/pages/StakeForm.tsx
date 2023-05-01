@@ -37,10 +37,10 @@ export default function StakeForm({updateParentStaking}: FormProps) {
         <h2 className={styles.title}>Choose Amount</h2>
         <div className={styles.field}>
           <label htmlFor="amount" className={styles.label}>{tokenOneName}</label>
-          <input type="number" id="amount" className={styles.input} onChange={handleAmountChange}/>
+          <input type="number" step="any" id="amount" className={styles.input} onChange={handleAmountChange}/>
 
           <label htmlFor="amount" className={styles.label}>{tokenTwoName}</label>
-          <input type="number" id="amount" className={styles.input}/>
+          <input type="number" step="any" id="amount" className={styles.input}/>
           <br></br>
           <select id="token-pair" className={styles.input} onChange={handleTokenPairChange}>
             <option value="ETH/USDT" selected>ETH/USDT</option>
