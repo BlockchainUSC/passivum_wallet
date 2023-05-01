@@ -6,7 +6,9 @@ import { Black_And_White_Picture } from "next/font/google";
 import Web3 from 'web3'
 import { all } from "bluebird";
 
-const EtherScanAPIKey = "MC2UGUBDI73K3252KT4EYG5NZNDA6244Y8";
+const EtherScanAPIKeys = ["MC2UGUBDI73K3252KT4EYG5NZNDA6244Y8", "8RBCV3QHV3DBRDP7GCM1PZ87ZIAE29IZIP"];
+var EtherScanAPIKeyIdx = 0;
+
 const EtherScanAPI_URL = "https://api.etherscan.io/api";
 // Addresses of ABI's for different tokens
 const USDT_ABI_ADDRESS = "0xdac17f958d2ee523a2206206994597c13d831ec7";
@@ -14,17 +16,12 @@ const USDC_ABI_ADDRESS = "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48";
 const WBTC_ABI_ADDRESS = "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599";
 const LINK_ABI_ADDRESS = "0x514910771af9ca656af840dff83e8264ecf986ca";
 
-// Get the balance of the account from EtherScan of different tokens
-const fetchTokenBalance = async (contractAddress: string, account: string) => {
-    const response = await fetch(`${EtherScanAPI_URL}?module=account&action=tokenbalance&contractaddress=${contractAddress}&address=${account}&tag=latest&apikey=${EtherScanAPIKey}`);
-    const data = await response.json();
-    if (data.status === '1') {
-      return Number(parseFloat(data.result) / (10 ** 18));
-    } else {
-      console.error('Error fetching token balance from Etherscan');
-      return 0;
-    }
-  };
+// Load balancing for API key calls
+const getEtherScanAPIKey = () => {
+    let ans = EtherScanAPIKeys[EtherScanAPIKeyIdx];
+    EtherScanAPIKeyIdx = (EtherScanAPIKeyIdx + 1) % EtherScanAPIKeys.length;
+    return ans;
+}
 
 
 export default function AutoStakePage() {
@@ -51,6 +48,30 @@ export default function AutoStakePage() {
         {name: "WBTC", balance: wbtcBalance, setMethod: setWBTCBalance},
         {name: "LINK", balance: linkBalance, setMethod: setLINKBalance}
     ];
+
+    // Get the balance of the account from EtherScan of different tokens
+    const fetchAndSetTokenBalance = async (contractAddress: string, account: string, tokenName: string) => {
+        // Get the corresponding token based on name
+        let token;
+        for(let tk of allBalances) {
+            if(tk.name == tokenName) {
+                token = tk;
+            }
+        }
+        if(!token) {
+            console.error("Token not found");
+            return;
+        }
+
+        const response = await fetch(`${EtherScanAPI_URL}?module=account&action=tokenbalance&contractaddress=${contractAddress}&address=${account}&tag=latest&apikey=${getEtherScanAPIKey()}`);
+        const data = await response.json();
+        console.log("address: ", contractAddress, data);
+        if (data.status === '1') {
+            token.setMethod(Number(parseFloat(data.result)));
+        } else {
+            console.error('Error fetching token balance from Etherscan');
+        }
+    };
 
     // Updates the balances of 2 tokens depending on the staking
     const tokenUpdateBalance = (token1: string, token2: string, stakingOne: number, stakingTwo: number) => {
@@ -113,7 +134,7 @@ export default function AutoStakePage() {
     useEffect(() => {
         // Get the balance of the account from EtherScan
         const updateBalance = async () => {
-            const response = await fetch(`${EtherScanAPI_URL}?module=account&action=balance&address=${address}&tag=latest&apikey=${EtherScanAPIKey}`);
+            const response = await fetch(`${EtherScanAPI_URL}?module=account&action=balance&address=${address}&tag=latest&apikey=${getEtherScanAPIKey()}`);
             const data = await response.json();
             console.log(data);
             if(data.status == 1) {
@@ -126,10 +147,10 @@ export default function AutoStakePage() {
 
         // Update the balances of all the other tokens
         const updateTokenBalances = async () => {
-            setUSDCBalance(await fetchTokenBalance(USDC_ABI_ADDRESS, address));
-            setUSDTBalance(await fetchTokenBalance(USDT_ABI_ADDRESS, address));
-            setWBTCBalance(await fetchTokenBalance(WBTC_ABI_ADDRESS, address));
-            setLINKBalance(await fetchTokenBalance(LINK_ABI_ADDRESS, address));
+            await fetchAndSetTokenBalance(USDC_ABI_ADDRESS, address, "USDC")
+            await fetchAndSetTokenBalance(USDT_ABI_ADDRESS, address, "USDT")
+            await fetchAndSetTokenBalance(WBTC_ABI_ADDRESS, address, "WBTC")
+            await fetchAndSetTokenBalance(LINK_ABI_ADDRESS, address, "LINK");
         };
         // Get the address from local storage
         const storedAddress = localStorage.getItem("account") || '';
