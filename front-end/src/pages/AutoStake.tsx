@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Router, useRouter } from "next/router";
 import { Black_And_White_Picture } from "next/font/google";
 import Web3 from 'web3'
+import { all } from "bluebird";
 
 const EtherScanAPIKey = "MC2UGUBDI73K3252KT4EYG5NZNDA6244Y8";
 const EtherScanAPI_URL = "https://api.etherscan.io/api";
@@ -32,7 +33,10 @@ export default function AutoStakePage() {
     const [balance, setBalance] = useState(0);
     const [address, setAddress] = useState('');
     const [amtIsInvalid, setAmtIsInvalid] = useState(false);
-    const [stakingAmt, setStakingAmt] = useState(0);
+    const [stakingAmt1, setStakingAmt1] = useState(0);
+    const [stakingName1, setStakingName1] = useState<string>("");
+    const [stakingAmt2, setStakingAmt2] = useState(0);
+    const [stakingName2, setStakingName2] = useState<string>("");
     const router = useRouter();
     // balances of different tokens
     const [usdtBalance, setUSDTBalance] = useState<number>(0);
@@ -41,12 +45,20 @@ export default function AutoStakePage() {
     const [linkBalance, setLINKBalance] = useState<number>(0);
 
     const allBalances = [
-        {name: "ETH", balance: balance},
-        {name: "USDT", balance: usdtBalance},
-        {name: "USDC", balance: usdcBalance},
-        {name: "WBTC", balance: wbtcBalance},
-        {name: "LINK", balance: linkBalance}
+        {name: "ETH", balance: balance, setMethod: setBalance},
+        {name: "USDT", balance: usdtBalance, setMethod: setUSDTBalance},
+        {name: "USDC", balance: usdcBalance, setMethod: setUSDCBalance},
+        {name: "WBTC", balance: wbtcBalance, setMethod: setWBTCBalance},
+        {name: "LINK", balance: linkBalance, setMethod: setLINKBalance}
     ];
+
+    // Updates the balances of 2 tokens depending on the staking
+    const tokenUpdateBalance = (token1: string, token2: string, stakingOne: number, stakingTwo: number) => {
+        setStakingName1(token1);
+        setStakingAmt1(stakingOne);
+        setStakingName2(token2);
+        setStakingAmt2(stakingTwo);
+    };
 
     // Handle image click
     const handleImageClick = (imageUrl: React.SetStateAction<string>) => {
@@ -68,14 +80,34 @@ export default function AutoStakePage() {
 
     // Keep track of the amount being staked, if it is invalid, and update amtIsInvalid
     useEffect(() => {
-        if(stakingAmt < 0 || stakingAmt > balance) {
-            setAmtIsInvalid(true);
-        } else {
+        let didSetToInvalid = false;
+        for (let tk of allBalances) {
+            if(((tk.name == stakingName1) && (stakingAmt1 > tk.balance)) 
+                || ((tk.name == stakingName2) && (stakingAmt2 > tk.balance))) {
+                setAmtIsInvalid(true);
+                didSetToInvalid = true;
+            }
+        }
+        if(!didSetToInvalid) {
             setAmtIsInvalid(false);
             setShowForm(false);
-            setBalance(balance - stakingAmt);
+            for (let tk of allBalances){
+                if(tk.name == stakingName1) {
+                    tk.setMethod(tk.balance - stakingAmt1);
+                }
+                if(tk.name == stakingName2) {
+                    tk.setMethod(tk.balance - stakingAmt2);
+                }
+            }
         }
-    }, [stakingAmt]);
+        // if(stakingAmt < 0 || stakingAmt > balance) {
+        //     setAmtIsInvalid(true);
+        // } else {
+        //     setAmtIsInvalid(false);
+        //     setShowForm(false);
+        //     setBalance(balance - stakingAmt);
+        // }
+    }, [stakingAmt1, stakingName1, stakingAmt2, stakingName2]);
 
     // Initialize the public address and the balance
     useEffect(() => {
@@ -116,7 +148,7 @@ export default function AutoStakePage() {
         return (
             <div className={ImageStyles.formContainer}>
                 <h2 className={ImageStyles.formTitle}>Stake your assets</h2>
-                <StakeForm updateParentStaking = {setStakingAmt}/>
+                <StakeForm updateParentStaking = {tokenUpdateBalance}/>
             </div>
         );
     };
