@@ -3,9 +3,6 @@ pragma solidity 0.8.17;
 import "../SmartAccount.sol";
 import {IModule} from "../interfaces/IModule.sol";
 
-//TODO: figure out staking tokens in uniswap with batch tx using sdk and javascript
-//TODO: get matt and the guys working on frontend
-
 contract SocialRecoveryModule is IModule {
     string public constant NAME = "Social Recovery Module";
     string public constant VERSION = "0.1.0";

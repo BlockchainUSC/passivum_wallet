@@ -3,6 +3,7 @@ cache/
 out/
 lib/openzeppelin-contracts
 remappings.txt
+notes.txt
 
 # Ignores development broadcast logs
 !/broadcast
