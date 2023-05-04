@@ -8,4 +8,5 @@ Passivum is an account abstraction smart contract wallet built on top of the Bic
 This application prioritizes frictionless user experience using web3auth. Users can access their wallet by logging in to their social media or email, and even utilize the fiat-to-crypto API to purchase tokens all on the same platform.
 
 Coming to Mantle soon:
+https://medium.com/0xmantle/biconomy-delivers-account-abstraction-for-developers-building-on-mantle-ffa178007320
 ![image](https://user-images.githubusercontent.com/25123526/235417135-bde3e8c8-b1b3-48a5-9242-19cc42731cb1.png)
