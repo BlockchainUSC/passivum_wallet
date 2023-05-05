@@ -26,18 +26,24 @@ body {
     rgb(var(--background-start-rgb));
 }
 
-
-/* styling for the companies in stake assets */
-.imageRow {
-  display: flex;
-  border-radius: 10px;
-  overflow: hidden;
+.custom-gradient-bg {
+  background: radial-gradient(
+      100% 100% at 50% 0%,
+      rgba(59, 130, 246, 0.2) 0%,
+      /* Blue color instead of purple */ rgba(200, 168, 255, 0.05) 25%,
+      rgba(229, 231, 235) 100%
+    ),
+    rgb(229, 231, 235);
 }
 
-.imageRow img {
-  width: 400px;
-  height: 300px;
-  object-fit: cover;
-  border-radius: 10px;
-  margin-right: 10px;
+@media (prefers-color-scheme: dark) {
+  .custom-gradient-bg {
+    background: radial-gradient(
+        100% 100% at 50% 0%,
+        rgba(59, 130, 246, 0.4) 0%,
+        /* Slightly stronger blue color */ rgba(200, 168, 255, 0.1) 25%,
+        /* Slightly stronger purple color */ rgba(0, 0, 0, 0) 100%
+      ),
+      rgb(31, 41, 55); /* Dark background color */
+  }
 }

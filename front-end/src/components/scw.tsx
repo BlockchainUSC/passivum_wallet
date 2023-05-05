@@ -109,25 +109,25 @@ const Home = ({onChildUpdate}: HomeProps) => {
   return (
     <div className={styles.container}>
       {/* <main className={styles.main}> */}
-      <main>
+      <main className="flex flex-col items-center">
         {/* <h1>Web3 Auth</h1> */}
         <button onClick={!account ? connectWeb3 : disconnectWeb3}
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center justify-center">
+        className="z-50 bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full flex items-center justify-center">
           {!account ? "Connect Wallet" : "Disconnect Wallet"}
         </button>
 
         {account && (
-          <div>
+          <div className="my-12 flex flex-col items-center text-center">
             <h2>EOA Address</h2>
             <p>{account}</p>
           </div>
         )}
 
-        {scwLoading && <h2>Loading Smart Account...</h2>}
+        {scwLoading && <h2 className="my-5">Loading Smart Account...</h2>}
 
         {scwAddress && (
-          <div>
-            <h2>Smart Account Address</h2>
+          <div className="mb-12 flex flex-col items-center text-center">
+            <h2 className="text-blue-700">Smart Account Address</h2>
             <p>{scwAddress}</p>
           </div>
         )}
