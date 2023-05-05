@@ -98,6 +98,8 @@ const Home = ({ onChildUpdate }: HomeProps) => {
       const context = smartAccount.getSmartAccountContext();
       setScwAddress(context.baseWallet.getAddress());
       setSmartAccount(smartAccount);
+      // DEUBG
+      console.log(smartAccount);
       setScwLoading(false);
     }
     if (!!provider && !!account) {

@@ -5,6 +5,10 @@ import { Router, useRouter } from "next/router";
 import { Black_And_White_Picture } from "next/font/google";
 import Web3 from "web3";
 import { all } from "bluebird";
+import {ethers} from 'ethers'
+import SmartAccount from "@biconomy/smart-account";
+import { ChainId } from "@biconomy/core-types";
+import UniswapABI from "../../public/Uniswapv3ABI.json";
 
 const EtherScanAPIKeys = [
   "MC2UGUBDI73K3252KT4EYG5NZNDA6244Y8",
@@ -32,6 +36,7 @@ export default function AutoStakePage() {
   const [balance, setBalance] = useState(0);
   const [address, setAddress] = useState("");
   const [amtIsInvalid, setAmtIsInvalid] = useState(false);
+  // For interacting with the staking form
   const [stakingAmt1, setStakingAmt1] = useState(0);
   const [stakingName1, setStakingName1] = useState<string>("");
   const [stakingAmt2, setStakingAmt2] = useState(0);
@@ -50,20 +55,31 @@ export default function AutoStakePage() {
     { name: "WBTC", balance: wbtcBalance, setMethod: setWBTCBalance },
     { name: "LINK", balance: linkBalance, setMethod: setLINKBalance },
   ];
+  // The provider that you will use to send transactions
+  var provider: any;
+  var UniswapContract;
 
-  // Sets up the web3 provider  
-  const contractCall = async () => {
+  // Sets up the web3 provider
+  const setup = async () => {
     // set up signer and contract
     if (!window.ethereum) {
       alert("please install MetaMask");
       return;
     } else {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      provider.send("eth_requestAccounts", []).catch((e) => console.log(e));
-
-      let contract = new ethers.Contract(
-        contractAddress,
-        SocialABI.result,
+      provider = new ethers.providers.Web3Provider(window.ethereum);
+      provider.send("eth_requestAccounts", []).catch((e: any) => console.log(e));
+      // Sets up the smart account
+      const smartAccount = new SmartAccount(provider, {
+        activeNetworkId: ChainId.POLYGON_MUMBAI,
+        supportedNetworksIds: [ChainId.POLYGON_MUMBAI],
+      });
+      await smartAccount.init();
+      console.log(smartAccount);
+      console.log(smartAccount.getSmartAccountContext().baseWallet.getAddress());
+      // Sets up the contract
+      UniswapContract = new ethers.Contract(
+        address,
+        UniswapABI.result,
         provider.getSigner()
       );
     }
@@ -192,6 +208,7 @@ export default function AutoStakePage() {
       setAddress(storedAddress);
       updateBalance();
       updateTokenBalances();
+      setup();
     } else {
       // If the address is not set, redirect to the main page
       router.push("/");
