@@ -50,21 +50,41 @@ export default function AddFriendsPage() {
           SocialABI.result,
           provider.getSigner()
         );
-
+            // BATCH
         // TODO: call contract for setup
+        const txs = []
 
-        await contract.setup(friendsList, threshold);
+const socialSetupInterface = new ethers.utils.Interface([
+  'function setup(address[] memory _friends, uint256 _threshold)'
+])
 
-        // Call for deadman
-        const date = new Date(year.current?.value + "-06-16");
+// Encode an ERC-20 token approval. User approves the amount of tokens to the Hyphen LP
+const data = socialSetupInterface.encodeFunctionData(
+  'setup', [hyphenLiquidityPoolAddress, amount]
+)
 
-        const unixTimestamp = Math.floor(date.getTime() / 1000);
+const tx1 = {
+  to: usdcAddress 
+  data: data
+}
 
-        await contract.setDeadMansSwitch(
-          true,
-          deadmanRef.current?.value,
-          unixTimestamp
-        );
+txs.push(tx1)
+
+
+
+
+        // await contract.setup(friendsList, threshold);
+
+        // // Call for deadman
+        // const date = new Date(year.current?.value + "-06-16");
+
+        // const unixTimestamp = Math.floor(date.getTime() / 1000);
+
+        // await contract.setDeadMansSwitch(
+        //   true,
+        //   deadmanRef.current?.value,
+        //   unixTimestamp
+        // );
       } catch (error) {}
     }
   };

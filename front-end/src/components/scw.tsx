@@ -5,12 +5,11 @@ import { ChainId } from "@biconomy/core-types";
 import SocialLogin from "@biconomy/web3-auth";
 import SmartAccount from "@biconomy/smart-account";
 
-
 type HomeProps = {
   onChildUpdate: () => void;
 };
 
-const Home = ({onChildUpdate}: HomeProps) => {
+const Home = ({ onChildUpdate }: HomeProps) => {
   const [provider, setProvider] = useState<any>();
   const [account, setAccount] = useState<string>();
   const [smartAccount, setSmartAccount] = useState<SmartAccount | null>(null);
@@ -92,8 +91,8 @@ const Home = ({onChildUpdate}: HomeProps) => {
       setScwAddress("");
       setScwLoading(true);
       const smartAccount = new SmartAccount(provider, {
-        activeNetworkId: ChainId.GOERLI,
-        supportedNetworksIds: [ChainId.GOERLI],
+        activeNetworkId: ChainId.POLYGON_MUMBAI,
+        supportedNetworksIds: [ChainId.POLYGON_MUMBAI],
       });
       await smartAccount.init();
       const context = smartAccount.getSmartAccountContext();
@@ -112,8 +111,10 @@ const Home = ({onChildUpdate}: HomeProps) => {
       {/* <main className={styles.main}> */}
       <main className="flex flex-col items-center">
         {/* <h1>Web3 Auth</h1> */}
-        <button onClick={!account ? connectWeb3 : disconnectWeb3}
-        className="z-50 bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full flex items-center justify-center">
+        <button
+          onClick={!account ? connectWeb3 : disconnectWeb3}
+          className="z-50 bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full flex items-center justify-center"
+        >
           {!account ? "Connect Wallet" : "Disconnect Wallet"}
         </button>
 
