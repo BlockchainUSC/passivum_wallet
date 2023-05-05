@@ -2,6 +2,8 @@ import { useRef, useState } from "react";
 import Image from "next/image";
 import animationData from "../../public/success-check.json";
 import Lottie from "react-lottie";
+import SocialABI from "../../public/SocialRecoveyABI.json";
+import { ethers } from "ethers";
 
 export default function AddFriendsPage() {
   const friendRef = useRef<HTMLInputElement>(null);
@@ -9,6 +11,8 @@ export default function AddFriendsPage() {
   const [friendsList, setFriendsList] = useState<string[]>([]);
   const [deadman, setDeadman] = useState("");
   const [nextPage, setNextPage] = useState(0);
+  const [threshold, setThreshold] = useState("");
+  const year = useRef<HTMLInputElement>(null);
 
   const defaultOptions = {
     loop: false,
@@ -19,6 +23,7 @@ export default function AddFriendsPage() {
       preserveAspectRatio: "xMidYMid slice",
     },
   };
+  const contractAddress = "0x47F828f8dBeD8e83E1897D11dC1B07bdbb81ae95";
 
   const addFriend = () => {
     setFriendsList([...friendsList, friendRef.current!.value]);
@@ -28,6 +33,41 @@ export default function AddFriendsPage() {
   function deleteFriend(name: string) {
     setFriendsList(friendsList.filter((friend) => friend !== name));
   }
+
+  const contractCall = async () => {
+    if (nextPage === 1) {
+      try {
+        // set up signer and contract
+        if (!window.ethereum) {
+          alert("please install MetaMask");
+          return;
+        }
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        provider.send("eth_requestAccounts", []).catch((e) => console.log(e));
+
+        let contract = new ethers.Contract(
+          contractAddress,
+          SocialABI.result,
+          provider.getSigner()
+        );
+
+        // TODO: call contract for setup
+
+        await contract.setup(friendsList, threshold);
+
+        // Call for deadman
+        const date = new Date(year.current?.value + "-06-16");
+
+        const unixTimestamp = Math.floor(date.getTime() / 1000);
+
+        await contract.setDeadMansSwitch(
+          true,
+          deadmanRef.current?.value,
+          unixTimestamp
+        );
+      } catch (error) {}
+    }
+  };
 
   return (
     <main
@@ -49,15 +89,17 @@ export default function AddFriendsPage() {
         </div>
       </div>
       {nextPage === 2 ? (
-        <>
+        <div className="mt-24">
           <div className="relative text-3xl flex place-items-center ">
             Social Recovery Succesfully Enabled
           </div>
           <div className="flex justify-center items-center">
             <Lottie options={defaultOptions} height={300} width={300} />
           </div>
-          <div>Your wallet can now be safely recovered.</div>
-        </>
+          <div className="text-center">
+            Your wallet can now be safely recovered.
+          </div>
+        </div>
       ) : (
         <>
           <div className="mt-28 text-3xl font-semibold flex place-items-center  ">
@@ -138,12 +180,9 @@ export default function AddFriendsPage() {
           {nextPage === 0 && (
             <div className="flex-col items-center">
               <div className="flex justify-center">
-                <text>
-                  {nextPage === 0
-                    ? "Minimum Number of Approvals Needed:"
-                    : "Year:"}
-                </text>
+                <text>Minimum Number of Approvals Needed:</text>
                 <input
+                  onChange={(e) => setThreshold(e.target.value)}
                   type="number"
                   min={nextPage === 0 ? "2" : "2023"}
                   className={`mx-2 px-2 dark:text-black ${
@@ -159,6 +198,7 @@ export default function AddFriendsPage() {
               <div className="flex justify-center">
                 <text>{"Year:"}</text>
                 <input
+                  ref={year}
                   type="number"
                   min={2024}
                   className={`mx-2 px-2 dark:text-black w-[8rem]`}
@@ -169,7 +209,11 @@ export default function AddFriendsPage() {
           )}
           <button
             className={`bg-blue-200 dark:bg-blue-800 ml-4 mt-5 px-8 py-2 rounded-xl text-xl`}
-            onClick={() => setNextPage(nextPage + 1)}
+            onClick={() => {
+              contractCall();
+
+              setNextPage(nextPage + 1);
+            }}
           >
             Continue
           </button>

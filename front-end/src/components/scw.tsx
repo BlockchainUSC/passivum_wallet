@@ -5,6 +5,7 @@ import { ChainId } from "@biconomy/core-types";
 import SocialLogin from "@biconomy/web3-auth";
 import SmartAccount from "@biconomy/smart-account";
 
+
 type HomeProps = {
   onChildUpdate: () => void;
 };
