@@ -51,6 +51,23 @@ export default function AutoStakePage() {
     { name: "LINK", balance: linkBalance, setMethod: setLINKBalance },
   ];
 
+  // Sets up the web3 provider  
+  const contractCall = async () => {
+    // set up signer and contract
+    if (!window.ethereum) {
+      alert("please install MetaMask");
+      return;
+    } else {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      provider.send("eth_requestAccounts", []).catch((e) => console.log(e));
+
+      let contract = new ethers.Contract(
+        contractAddress,
+        SocialABI.result,
+        provider.getSigner()
+      );
+    }
+  }
   // Get the balance of the account from EtherScan of different tokens
   const fetchAndSetTokenBalance = async (
     contractAddress: string,
@@ -145,7 +162,7 @@ export default function AutoStakePage() {
     // }
   }, [stakingAmt1, stakingName1, stakingAmt2, stakingName2]);
 
-  // Initialize the public address and the balance
+  // Initialize the public address, the balance,and the web3 provider
   useEffect(() => {
     // Get the balance of the account from EtherScan
     const updateBalance = async () => {
