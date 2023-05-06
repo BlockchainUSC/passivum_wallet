@@ -1,4 +1,0 @@
-1. deploy smart contracts on mantle/eth testnet (for eth only need to deploy module)
-2. finish frontend integration with smart contracts for social recovery
-3. finish frontend integration with smart contracts for auto staking
-4. make sure SCW can actually send transactions
