@@ -4,6 +4,8 @@ import animationData from "../../public/success-check.json";
 import Lottie from "react-lottie";
 import SocialABI from "../../public/SocialRecoveyABI.json";
 import { ethers } from "ethers";
+import { ChainId } from "@biconomy/core-types";
+import SmartAccount from "@biconomy/smart-account";
 
 export default function AddFriendsPage() {
   const friendRef = useRef<HTMLInputElement>(null);
@@ -50,28 +52,75 @@ export default function AddFriendsPage() {
           SocialABI.result,
           provider.getSigner()
         );
-            // BATCH
+        // BATCH
         // TODO: call contract for setup
-        const txs = []
+        const txs = [];
 
-const socialSetupInterface = new ethers.utils.Interface([
-  'function setup(address[] memory _friends, uint256 _threshold)'
-])
+        const socialSetupInterface = new ethers.utils.Interface([
+          "function setup(address[] memory _friends, uint256 _threshold)",
+        ]);
 
-// Encode an ERC-20 token approval. User approves the amount of tokens to the Hyphen LP
-const data = socialSetupInterface.encodeFunctionData(
-  'setup', [hyphenLiquidityPoolAddress, amount]
-)
+        // Encode an ERC-20 token approval. User approves the amount of tokens to the Hyphen LP
+        const data1 = socialSetupInterface.encodeFunctionData("setup", [
+          friendsList,
+          threshold,
+        ]);
 
-const tx1 = {
-  to: usdcAddress 
-  data: data
-}
+        const tx1 = {
+          to: contractAddress,
+          data: data1,
+        };
 
-txs.push(tx1)
+        txs.push(tx1);
 
+        // Call dead mans switch
+        const socialDeadInterface = new ethers.utils.Interface([
+          "function setDeadMansSwitch (bool _on, address _receiver, uint256 _unlockTime)",
+        ]);
 
+        const date = new Date(year.current?.value + "-06-16");
 
+        const unixTimestamp = Math.floor(date.getTime() / 1000);
+
+        // Encode an dead mans switch with bool, address, and timestamp
+        const data2 = socialDeadInterface.encodeFunctionData(
+          "setDeadMansSwitch",
+          [true, deadmanRef.current?.value, unixTimestamp]
+        );
+
+        const tx2 = {
+          to: contractAddress,
+          data: data2,
+        };
+
+        txs.push(tx2);
+
+        // SEND BATCH
+        const smartAccount = new SmartAccount(provider, {
+          activeNetworkId: ChainId.POLYGON_MUMBAI,
+          supportedNetworksIds: [ChainId.POLYGON_MUMBAI],
+        });
+        await smartAccount.init();
+
+        console.log(smartAccount);
+        // User Self Refund (Native / ERC20)
+        const feeQuotes = await smartAccount.getFeeQuotesForBatch({
+          transactions: txs,
+        });
+
+        // Choose a fee quote of your choice provided by the relayer
+        const transaction = await smartAccount.createUserPaidTransactionBatch({
+          transactions: txs,
+          feeQuote: feeQuotes[1],
+        });
+
+        let gasLimit: any = { hex: "0x1E8480", type: "hex" };
+
+        // send transaction internally calls signTransaction and sends it to connected relayer
+        const txHash = await smartAccount.sendUserPaidTransaction({
+          tx: transaction,
+          gasLimit,
+        });
 
         // await contract.setup(friendsList, threshold);
 
@@ -85,7 +134,9 @@ txs.push(tx1)
         //   deadmanRef.current?.value,
         //   unixTimestamp
         // );
-      } catch (error) {}
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
