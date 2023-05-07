@@ -36,6 +36,7 @@ export default function AutoStakePage() {
   const [balance, setBalance] = useState(0);
   const [address, setAddress] = useState("");
   const [amtIsInvalid, setAmtIsInvalid] = useState(false);
+  const [scwAddress, setScwAddress] = useState("");
   // For interacting with the staking form
   const [stakingAmt1, setStakingAmt1] = useState(0);
   const [stakingName1, setStakingName1] = useState<string>("");
@@ -76,6 +77,9 @@ export default function AutoStakePage() {
       await smartAccount.init();
       console.log(smartAccount);
       console.log(smartAccount.getSmartAccountContext().baseWallet.getAddress());
+
+      setScwAddress(smartAccount.getSmartAccountContext().baseWallet.getAddress());
+
       // Sets up the contract
       UniswapContract = new ethers.Contract(
         address,
@@ -201,6 +205,7 @@ export default function AutoStakePage() {
       await fetchAndSetTokenBalance(USDT_ABI_ADDRESS, address, "USDT");
       await fetchAndSetTokenBalance(WBTC_ABI_ADDRESS, address, "WBTC");
       await fetchAndSetTokenBalance(LINK_ABI_ADDRESS, address, "LINK");
+
     };
     // Get the address from local storage
     const storedAddress = localStorage.getItem("account") || "";
@@ -278,14 +283,14 @@ export default function AutoStakePage() {
       </div>
 
       <div className="mt-8 relative text-lg sm:text-xl flex place-items-center">
-        Public Address:
+        Smart Account Address:
         <span
           className="ml-2 font-medium hover:text-blue-500 hover:cursor-pointer active:text-blue-300"
-          onClick={() => navigator.clipboard.writeText(address)}
+          onClick={() => navigator.clipboard.writeText(scwAddress)}
         >
-          {address.substring(0, 6) +
+          {scwAddress.substring(0, 6) +
             "..." +
-            address.substring(address.length - 4, address.length)}
+            scwAddress.substring(scwAddress.length - 4, scwAddress.length)}
         </span>
       </div>
 

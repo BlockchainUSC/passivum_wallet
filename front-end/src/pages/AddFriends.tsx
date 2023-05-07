@@ -52,15 +52,14 @@ export default function AddFriendsPage() {
           SocialABI.result,
           provider.getSigner()
         );
+
         // BATCH
-        // TODO: call contract for setup
         const txs = [];
 
         const socialSetupInterface = new ethers.utils.Interface([
           "function setup(address[] memory _friends, uint256 _threshold)",
         ]);
 
-        // Encode an ERC-20 token approval. User approves the amount of tokens to the Hyphen LP
         const data1 = socialSetupInterface.encodeFunctionData("setup", [
           friendsList,
           threshold,
@@ -95,32 +94,66 @@ export default function AddFriendsPage() {
 
         txs.push(tx2);
 
-        // SEND BATCH
+        // initialize smart account
         const smartAccount = new SmartAccount(provider, {
           activeNetworkId: ChainId.POLYGON_MUMBAI,
           supportedNetworksIds: [ChainId.POLYGON_MUMBAI],
+          networkConfig: [
+            {
+              chainId: ChainId.POLYGON_MUMBAI,
+              // Dapp API Key for paymaster/gas tank from biconomy dashboard 
+              dappAPIKey: "hyva26yFh.45a90b19-8598-4d07-a14a-bcc1d9c85198",
+              providerUrl: provider.connection.url
+            }
+          ]
         });
         await smartAccount.init();
 
         console.log(smartAccount);
-        // User Self Refund (Native / ERC20)
-        const feeQuotes = await smartAccount.getFeeQuotesForBatch({
-          transactions: txs,
-        });
 
-        // Choose a fee quote of your choice provided by the relayer
-        const transaction = await smartAccount.createUserPaidTransactionBatch({
-          transactions: txs,
-          feeQuote: feeQuotes[1],
-        });
+        //another transaction to whitelist/enable the social recovery module in the SCW's module manager
+        const moduleManagerInterface = new ethers.utils.Interface([
+          "function enableModule(address module)",
+        ]);
 
-        let gasLimit: any = { hex: "0x1E8480", type: "hex" };
+        const data3 = moduleManagerInterface.encodeFunctionData(
+          "enableModule",
+          [contractAddress]
+        );
+        
+        //call enablemodule in the SCW from the SCW itself (can't be called from anywhere else)
+        const tx3 = {
+          to: smartAccount.address,
+          data: data3
+        };
 
-        // send transaction internally calls signTransaction and sends it to connected relayer
-        const txHash = await smartAccount.sendUserPaidTransaction({
-          tx: transaction,
-          gasLimit,
-        });
+        txs.push(tx3);
+
+        // Sending gasless transaction
+        const txResponse = await smartAccount.sendTransactionBatch({ transactions: txs });
+        console.log('UserOp hash', txResponse.hash);
+        // If you do not subscribe to listener, one can also get the receipt like shown below 
+        const txReciept = await txResponse.wait();
+        console.log('Tx Hash', txReciept.transactionHash);
+
+        // // User Self Refund (Native / ERC20)
+        // const feeQuotes = await smartAccount.getFeeQuotesForBatch({
+        //   transactions: txs,
+        // });
+
+        // // Choose a fee quote of your choice provided by the relayer
+        // const transaction = await smartAccount.createUserPaidTransactionBatch({
+        //   transactions: txs,
+        //   feeQuote: feeQuotes[1],
+        // });
+
+        // let gasLimit: any = { hex: "0x1E8480", type: "hex" };
+
+        // // send transaction internally calls signTransaction and sends it to connected relayer
+        // const txHash = await smartAccount.sendUserPaidTransaction({
+        //   tx: transaction,
+        //   gasLimit,
+        // });
 
         // await contract.setup(friendsList, threshold);
 
