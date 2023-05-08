@@ -9,7 +9,7 @@ This application prioritizes frictionless user experience using web3auth. Users 
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=Thn_FEfuNSc
 " target="_blank"><img src="http://img.youtube.com/vi/Thn_FEfuNSc/0.jpg" 
-alt="Passivum Wallet Demo" width="240" height="180" border="10" /></a>
+alt="Passivum Wallet Demo" width="440" height="380" border="10" /></a>
 
 ___
 Coming to Mantle soon:
