@@ -1,5 +1,5 @@
 # passivum_wallet
-Your savings account for crypto. 
+**Your savings account for crypto.**
 
 EduDAO Hackathon 2023
 
@@ -7,6 +7,12 @@ Passivum is an account abstraction smart contract wallet built on top of the Bic
 
 This application prioritizes frictionless user experience using web3auth. Users can access their wallet by logging in to their social media or email, and even utilize the fiat-to-crypto API to purchase tokens all on the same platform.
 
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=Thn_FEfuNSc
+" target="_blank"><img src="http://img.youtube.com/vi/Thn_FEfuNSc/0.jpg" 
+alt="Passivum Wallet Demo" width="240" height="180" border="10" /></a>
+
+___
 Coming to Mantle soon:
+
 https://medium.com/0xmantle/biconomy-delivers-account-abstraction-for-developers-building-on-mantle-ffa178007320
 ![image](https://user-images.githubusercontent.com/25123526/235417135-bde3e8c8-b1b3-48a5-9242-19cc42731cb1.png)
