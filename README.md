@@ -7,7 +7,8 @@ Passivum is an account abstraction smart contract wallet built on top of the Bic
 
 This application prioritizes frictionless user experience using web3auth. Users can access their wallet by logging in to their social media or email, and even utilize the fiat-to-crypto API to purchase tokens all on the same platform.
 
-**Check out our demo video**
+**Check out our demo video:**
+
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=Thn_FEfuNSc
 " target="_blank"><img src="http://img.youtube.com/vi/Thn_FEfuNSc/0.jpg" 
 alt="Passivum Wallet Demo" width="540" height="380" border="10" /></a>
