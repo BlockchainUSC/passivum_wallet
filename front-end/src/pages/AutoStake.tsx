@@ -233,7 +233,7 @@ export default function AutoStakePage() {
   // builds the row of images
   const ImageRow = () => {
     const images = [
-      "https://images.prismic.io/contrary-research/0fdbf218-37ff-4afb-af27-1cfafb081dbc_Uniswap+Long+Logo.png?auto=compress,format",
+      "https://images.prismic.io/contrary-research/0fdbf218-37ff-4afb-af27-1cfafb081dbc_Uniswap+Long+Logo.png?auto=compress,format"
       //"https://logowik.com/content/uploads/images/1inch-1inch8031.jpg",
       //"https://coincentral.com/wp-content/uploads/2018/01/0x.png",
     ];
@@ -283,7 +283,7 @@ export default function AutoStakePage() {
         Manage Assets
       </div>
 
-      <div className="mt-8 relative text-lg sm:text-xl flex place-items-center">
+      <div className="mt-5 relative text-lg sm:text-xl flex place-items-center">
         Smart Account Address:
         <span
           className="ml-2 font-medium hover:text-blue-500 hover:cursor-pointer active:text-blue-300"
@@ -295,11 +295,11 @@ export default function AutoStakePage() {
         </span>
       </div>
 
-      <div className=" mt-20 font-semibold relative text-3xl flex place-items-center ">
+      <div className=" mt-8 font-semibold relative text-3xl flex place-items-center ">
         Balances:
       </div>
 
-      <div className="my-8 flex flex-wrap justify-center items-center gap-4">
+      <div className="mt-5 flex flex-wrap justify-center items-center gap-4">
         {allBalances.map(({ name, balance }) => {
           return (
             <p
@@ -312,7 +312,7 @@ export default function AutoStakePage() {
         })}
       </div>
 
-      <div className=" mt-20 font-semibold relative text-3xl flex place-items-center ">
+      <div className=" mt-8 font-semibold relative text-3xl flex place-items-center ">
         Deposit Into Smart Account:
       </div>
 
@@ -325,13 +325,13 @@ export default function AutoStakePage() {
       ) : null}
 
 
-      <div className=" mt-20 font-semibold relative text-3xl flex place-items-center ">
+      <div className=" mt-12 font-semibold relative text-3xl flex place-items-center ">
         One-Click Stake Idle Assets:
       </div>
 
       <ImageRow />
 
-      <div className="flex my-24 text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
+      <div className="flex my-8 text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
         <a
           onClick={backButton}
           className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"

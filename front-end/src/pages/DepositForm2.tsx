@@ -84,10 +84,13 @@ const DepositForm: React.FC = () => {
   };
 
   return (
-    <div>
-      <div>
-        <label>Select Token:</label>
-        <select value={selectedToken} onChange={(e) => setSelectedToken(e.target.value)}>
+    <div style={{ width: '300px', margin: '0 auto', fontFamily: 'Arial, sans-serif' }}>
+      <div style={{ marginBottom: '20px', marginTop: '25px' }}>
+        <select
+          style={{ width: '100%', padding: '10px', fontSize: '16px' }}
+          value={selectedToken}
+          onChange={(e) => setSelectedToken(e.target.value)}
+        >
           <option value="">-- Select Token --</option>
           {tokenOptions.map((token) => (
             <option key={token.symbol} value={token.symbol}>
@@ -96,14 +99,34 @@ const DepositForm: React.FC = () => {
           ))}
         </select>
       </div>
-      <div>
-        <label>Amount:</label>
-        <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} />
+      <div style={{ marginBottom: '20px' }}>
+        <label style={{ display: 'block', marginBottom: '10px' }}>Amount:</label>
+        <input
+          type="number"
+          style={{ width: '100%', padding: '10px', fontSize: '16px' }}
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+        />
       </div>
-      <button onClick={handleDeposit}>Deposit</button>
-      {status && <p>{status}</p>}
+      <button
+        style={{
+          width: '100%',
+          padding: '10px',
+          fontSize: '16px',
+          background: '#3b82f6',
+          color: '#fff',
+          border: 'none',
+          borderRadius: '4px',
+          cursor: 'pointer',
+        }}
+        onClick={handleDeposit}
+      >
+        Deposit
+      </button>
+      {status && <p style={{ marginTop: '20px', textAlign: 'center' }}>{status}</p>}
     </div>
   );
 };
+
 
 export default DepositForm;
