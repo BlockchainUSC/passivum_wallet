@@ -14,7 +14,7 @@ export default function StakeForm({updateParentStaking}: FormProps) {
   const [tokenOneName, setTokenOneName] = useState<string>("ETH");
   const [tokenTwoName, setTokenTwoName] = useState<string>("USDT");
 
-  // Handles when the user selects different token paris
+  // Handles when the user selects different token pairs
   const handleTokenPairChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const tokenPair = event.target.value;
     const tokens = tokenPair.split("/");

@@ -1,5 +1,6 @@
 import ImageStyles from "../styles/ImageRow.module.css";
 import StakeForm from "./StakeForm";
+import DepositForm from "./DepositForm2";
 import React, { useEffect, useState } from "react";
 import { Router, useRouter } from "next/router";
 import { Black_And_White_Picture } from "next/font/google";
@@ -91,7 +92,7 @@ export default function AutoStakePage() {
   // Get the balance of the account from EtherScan of different tokens
   const fetchAndSetTokenBalance = async (
     contractAddress: string,
-    account: string,
+    smartAccount: string,
     tokenName: string
   ) => {
     // Get the corresponding token based on name
@@ -107,7 +108,7 @@ export default function AutoStakePage() {
     }
 
     const response = await fetch(
-      `${EtherScanAPI_URL}?module=account&action=tokenbalance&contractaddress=${contractAddress}&address=${account}&tag=latest&apikey=${getEtherScanAPIKey()}`
+      `${EtherScanAPI_URL}?module=account&action=tokenbalance&contractaddress=${contractAddress}&address=${smartAccount}&tag=latest&apikey=${getEtherScanAPIKey()}`
     );
     const data = await response.json();
     console.log("address: ", contractAddress, data);
@@ -187,7 +188,7 @@ export default function AutoStakePage() {
     // Get the balance of the account from EtherScan
     const updateBalance = async () => {
       const response = await fetch(
-        `${EtherScanAPI_URL}?module=account&action=balance&address=${address}&tag=latest&apikey=${getEtherScanAPIKey()}`
+        `${EtherScanAPI_URL}?module=account&action=balance&address=${scwAddress}&tag=latest&apikey=${getEtherScanAPIKey()}`
       );
       const data = await response.json();
       console.log(data);
@@ -201,10 +202,10 @@ export default function AutoStakePage() {
 
     // Update the balances of all the other tokens
     const updateTokenBalances = async () => {
-      await fetchAndSetTokenBalance(USDC_ABI_ADDRESS, address, "USDC");
-      await fetchAndSetTokenBalance(USDT_ABI_ADDRESS, address, "USDT");
-      await fetchAndSetTokenBalance(WBTC_ABI_ADDRESS, address, "WBTC");
-      await fetchAndSetTokenBalance(LINK_ABI_ADDRESS, address, "LINK");
+      await fetchAndSetTokenBalance(USDC_ABI_ADDRESS, scwAddress, "USDC"); //was address not scwAddress
+      await fetchAndSetTokenBalance(USDT_ABI_ADDRESS, scwAddress, "USDT");
+      await fetchAndSetTokenBalance(WBTC_ABI_ADDRESS, scwAddress, "WBTC");
+      await fetchAndSetTokenBalance(LINK_ABI_ADDRESS, scwAddress, "LINK");
 
     };
     // Get the address from local storage
@@ -218,7 +219,7 @@ export default function AutoStakePage() {
       // If the address is not set, redirect to the main page
       router.push("/");
     }
-  }, [address, router]);
+  }, [address, router]); //change to scwAddress?
 
   const Form = () => {
     // Here we can define the form component
@@ -233,8 +234,8 @@ export default function AutoStakePage() {
   const ImageRow = () => {
     const images = [
       "https://images.prismic.io/contrary-research/0fdbf218-37ff-4afb-af27-1cfafb081dbc_Uniswap+Long+Logo.png?auto=compress,format",
-      "https://logowik.com/content/uploads/images/1inch-1inch8031.jpg",
-      "https://coincentral.com/wp-content/uploads/2018/01/0x.png",
+      //"https://logowik.com/content/uploads/images/1inch-1inch8031.jpg",
+      //"https://coincentral.com/wp-content/uploads/2018/01/0x.png",
     ];
 
     return (
@@ -279,7 +280,7 @@ export default function AutoStakePage() {
       </div>
 
       <div className="mt-28 relative text-3xl font-semibold flex place-items-center  ">
-        Auto-Stake Assets
+        Manage Assets
       </div>
 
       <div className="mt-8 relative text-lg sm:text-xl flex place-items-center">
@@ -311,11 +312,22 @@ export default function AutoStakePage() {
         })}
       </div>
 
+      <div className=" mt-20 font-semibold relative text-3xl flex place-items-center ">
+        Deposit Into Smart Account:
+      </div>
+
+      <DepositForm />
+
       {amtIsInvalid ? (
         <div className="relative text-3xl  place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700/10 after:dark:from-sky-900 after:dark:via-[#0141ff]/40 before:lg:h-[360px] bg-red-500 p-4 rounded-lg flex items-center justify-center">
           Insufficient funds or invalid amount!
         </div>
       ) : null}
+
+
+      <div className=" mt-20 font-semibold relative text-3xl flex place-items-center ">
+        One-Click Stake Idle Assets:
+      </div>
 
       <ImageRow />
 

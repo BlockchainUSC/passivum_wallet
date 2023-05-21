@@ -93,7 +93,7 @@ export default function Home() {
           style={{ display: hasAccount ? 'block' : 'none' }}
         >
           <h2 className={`mb-3 text-2xl font-semibold`}>
-             Stake Assets{' '}
+             Manage Assets{' '}
             <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
               -&gt;
             </span>
