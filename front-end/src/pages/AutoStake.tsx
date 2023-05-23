@@ -1,6 +1,6 @@
 import ImageStyles from "../styles/ImageRow.module.css";
 import StakeForm from "./StakeForm";
-import DepositForm from "./DepositForm2";
+import DepositForm from "./DepositForm";
 import React, { useEffect, useState } from "react";
 import { Router, useRouter } from "next/router";
 import { Black_And_White_Picture } from "next/font/google";
