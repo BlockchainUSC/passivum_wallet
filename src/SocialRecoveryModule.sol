@@ -148,7 +148,7 @@ contract SocialRecoveryModule is IModule {
 
     /**
      * @dev Verify that a recovery attempt has been confirmed by the required amount of friends
-     * @param recoveryHash the hash of the recovery data for that particular attampted recovery (wallet, newOwner, nonce)
+     * @param recoveryHash the hash of the recovery data for that particular attempted recovery (wallet, newOwner, nonce)
      * @param _wallet the wallet we are trying to recover
      * @return true if the recovery attempt has been confirmed by the required amount of friends, false otherwise
      */

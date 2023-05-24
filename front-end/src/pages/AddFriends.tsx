@@ -94,7 +94,7 @@ export default function AddFriendsPage() {
 
         txs.push(tx2);
 
-        // initialize smart account
+        // initialize smart account object
         const smartAccount = new SmartAccount(provider, {
           activeNetworkId: ChainId.POLYGON_MUMBAI,
           supportedNetworksIds: [ChainId.POLYGON_MUMBAI],

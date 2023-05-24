@@ -34,6 +34,14 @@ const DepositForm: React.FC = () => {
     const smartAccount = new SmartAccount(provider, {
       activeNetworkId: ChainId.POLYGON_MUMBAI,
       supportedNetworksIds: [ChainId.POLYGON_MUMBAI],
+      networkConfig: [
+        {
+          chainId: ChainId.POLYGON_MUMBAI,
+          // Dapp API Key for paymaster/gas tank from biconomy dashboard 
+          dappAPIKey: "hyva26yFh.45a90b19-8598-4d07-a14a-bcc1d9c85198",
+          providerUrl: provider.connection.url
+        }
+      ]
     });
 
     await smartAccount.init();
